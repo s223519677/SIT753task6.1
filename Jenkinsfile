@@ -1,49 +1,66 @@
 pipeline {
     agent any
-    
     environment {
-        DIRECTORY_PATH = "/path/to/code"
-        TESTING_ENVIRONMENT = "testing-environment"
-        PRODUCTION_ENVIRONMENT = "production-environment"
+        branch = 'main'
+        scmUrl = 'https://github.com/s223519677@deakin.edu.au/Maven.git'
+        serverPort = '8080'
+        stagingServer = 'http://ec2-16-171-29-48.eu-north-1.compute.amazonaws.com:8080'
+        productionServer = 'http://ec2-16-171-29-48.eu-north-1.compute.amazonaws.com:8080'
     }
-    
     stages {
-        stage('Build') {
+        stage('checkout git') {
             steps {
-                echo "Fetching source code from ${env.DIRECTORY_PATH}"
-                echo "Compiling code and generating artifacts"
+                git branch: branch, credentialsId: 'https', url: scmUrl
+                 echo "Fetching source code from github"
             }
         }
-        
-        stage('Test') {
+
+        stage('build') {
             steps {
-                echo "Running unit tests"
-                echo "Running integration tests"
+                bat 'mvn clean compile'
+                echo " Maven Compiling code and generating artifacts"
             }
         }
-        
-        stage('Code Quality Check') {
+
+        stage ('Unit & Intergration Test') {
             steps {
-                echo "Checking code quality"
+                parallel (
+                    "unit tests": { powershell 'mvn test' },
+                    "integration tests": { powershell 'mvn integration-test' }
+                )
             }
         }
-        
-        stage('Deploy') {
+
+        stage('deploy to Production'){
             steps {
-                echo "Deploying application to ${env.TESTING_ENVIRONMENT}"
+                deploy adapters: [tomcat9(credentialsId: 'Tomcat', path: '', url: 'http://ec2-16-171-29-48.eu-north-1.compute.amazonaws.com:8080')], contextPath: 'null',  war: 'target/*.war'
+                 echo "Deploying Code to AWS EC2"
+                  echo "Access the ec2 http://ec2-16-171-29-48.eu-north-1.compute.amazonaws.com:8080/manager/html "
             }
         }
-        
-        stage('Approval') {
+        stage('deploy to staging(Test'){
             steps {
-                sh "sleep 10"
+                deploy adapters: [tomcat9(credentialsId: 'Tomcat', path: '', url: 'http://ec2-16-171-29-48.eu-north-1.compute.amazonaws.com:8080')], contextPath: 'testapp',  war: 'target/*.war'
+                 echo "Deploying Code to AWS EC2"
             }
         }
-        
-        stage('Deploy to Production') {
-            steps {
-                echo "Deploying code to ${env.PRODUCTION_ENVIRONMENT}"
-            }
+
+       // stage('deploy staging'){
+       //     steps {
+        //        deploy(stagingServer, serverPort)
+        //    }
+        //}
+
+       // stage('deploy production'){
+         //   steps {
+         //       deploy(productionServer, serverPort)
+         //   }
+        //}
+    }
+    post {
+        success {
+            mail to: 'okoraforokechukwu@gmail.com', subject: 'Pipeline Success', body: "${env.BUILD_URL}"
+         echo "Sending Pipeline E-mail to Senior Software engineer paul"  
         }
     }
 }
