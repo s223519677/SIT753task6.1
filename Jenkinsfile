@@ -2,7 +2,7 @@ pipeline {
     agent any
     environment {
         branch = 'main'
-        scmUrl = 'https://github.com/s223519677/SIT753task6.1'
+        scmUrl = 'https://github.com/seanjackson/Maven.git'
         serverPort = '8080'
         stagingServer = 'http://ec2-16-171-29-48.eu-north-1.compute.amazonaws.com:8080'
         productionServer = 'http://ec2-16-171-29-48.eu-north-1.compute.amazonaws.com:8080'
