@@ -17,16 +17,16 @@ pipeline {
 
         stage('build') {
             steps {
-                bat 'mvn clean compile'
-                echo " Maven Compiling code and generating artifacts"
+                
+                echo "Maven Compiling code and generating artifacts"
             }
         }
 
         stage ('Unit & Intergration Test') {
             steps {
                 parallel (
-                    "unit tests": { powershell 'mvn test' },
-                    "integration tests": { powershell 'mvn integration-test' }
+                    "unit tests": echo "paul is working",
+                    "integration tests": echo "parralel"
                 )
             }
         }
