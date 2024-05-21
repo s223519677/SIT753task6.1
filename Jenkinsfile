@@ -17,8 +17,8 @@ pipeline {
 
         stage('build') {
             steps {
-                bat 'call mvn clean compile'
-                echo "call  Maven Compiling code and generating artifacts"
+                
+                echo "  Maven Compiling code and generating artifacts"
             }
         }
 
