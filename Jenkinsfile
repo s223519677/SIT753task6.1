@@ -2,7 +2,7 @@ pipeline {
     agent any
     environment {
         branch = 'main'
-        scmUrl = 'https://github.com/s223519677/SIT753task6.1.git'
+        scmUrl = 'https://github.com/s223519677@deakin.edu.au/Maven.git'
         serverPort = '8080'
         stagingServer = 'http://ec2-16-171-29-48.eu-north-1.compute.amazonaws.com:8080'
         productionServer = 'http://ec2-16-171-29-48.eu-north-1.compute.amazonaws.com:8080'
@@ -17,8 +17,8 @@ pipeline {
 
         stage('build') {
             steps {
-                
-                echo "  Maven Compiling code and generating artifacts"
+                bat 'mvn clean compile'
+                echo " Maven Compiling code and generating artifacts"
             }
         }
 
