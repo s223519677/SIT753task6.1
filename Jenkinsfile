@@ -25,8 +25,10 @@ pipeline {
         stage ('Unit & Intergration Test') {
             steps {
                 parallel (
-                   "unit tests": { "powershell": "mvn test" },
-                    "integration tests": { "powershell": "mvn integration-test" }
+                  { "unit tests": {"make": "npm test"}
+                   },
+                   {"integration tests": {"make": "make integration-test"}
+}
                 )
             }
         }
