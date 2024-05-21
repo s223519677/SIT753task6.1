@@ -25,9 +25,9 @@ pipeline {
         stage ('Unit & Intergration Test') {
             steps {
                 parallel (
-                  { "unit tests": {"make" "make test"}
+                  { "unit tests" {"make" "make test"}
                    },
-                   {"integration tests": {"make" "make integration-test"}
+                   {"integration tests" {"make" "make integration-test"}
 }
                 )
             }
