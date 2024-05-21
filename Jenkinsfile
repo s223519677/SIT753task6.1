@@ -25,8 +25,8 @@ pipeline {
         stage ('Unit & Intergration Test') {
             steps {
                 parallel (
-                    "unit tests": echo "paul is working",
-                    "integration tests": echo "parralel"
+                    "unit tests": { powershell 'mvn test' },
+                    "integration tests": { powershell 'mvn integration-test' }
                 )
             }
         }
