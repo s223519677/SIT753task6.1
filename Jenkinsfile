@@ -52,4 +52,5 @@ post {
          echo "Sending Pipeline E-mail to Senior Software engineer paul"  
         }
     }
-}
+  }
+}    
