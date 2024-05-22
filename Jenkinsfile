@@ -18,7 +18,7 @@ pipeline {
             post {
                 success {
                     echo 'Unit tests completed successfully'
-                    mail(
+                    emailext(
                         to: 'okoraforokechukwu@gmail.com',
                         subject: "The status of the Unit and Integration Tests: SUCCESS",
                         body: 'Log files are attached for additional information about the process.',
