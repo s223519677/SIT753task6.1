@@ -1,94 +1,55 @@
 pipeline {
     agent any
     
+    environment {
+        DIRECTORY_PATH = "/path/to/code"
+        TESTING_ENVIRONMENT = "testing-environment"
+        PRODUCTION_ENVIRONMENT = "production-environment"
+    }
+    
     stages {
         stage('Build') {
             steps {
-                echo 'Build Android project using Gradle'
-                // Uncomment the following line to run Gradle build:
-                // sh './gradlew clean assembleDebug'
+                echo "Fetching source code from ${env.DIRECTORY_PATH}"
+                echo "Compiling code and generating artifacts"
             }
         }
         
-        stage('Unit and Integration Tests') {
+        stage('Test') {
             steps {
-                echo 'Run unit tests here'
-            }
-
-            post {
-                success {
-                    echo 'Unit tests completed successfully'
-                    emailext(
-                        to: 'okoraforokechukwu@gmail.com',
-                        subject: "The status of the Unit and Integration Tests: ${currentBuild.result}",
-                        body: 'Log files are attached for additional information about the process',
-                        attachLog: true
-                    )
-                }
-                failure {
-                    echo 'Unit tests failed'
-                    emailext(
-                        to: 'okoraforokechukwu@gmail.comm',
-                        subject: "The status of the Unit and Integration Tests: ${currentBuild.result}",
-                        body: 'Log files are attached for additional information about the process',
-                        attachLog: true
-                    )
-                }
+                echo "Running unit tests"
+                echo "Running integration tests"
             }
         }
         
-        stage('Code Analysis') {
+        stage('Code Quality Check') {
             steps {
-                echo 'Integrate code analysis tool (e.g., SonarQube)'
+                echo "Checking code quality"
             }
         }
         
-        stage('Security Scan') {
+        stage('Deploy') {
             steps {
-                echo 'Perform security scan using a tool like OWASP Dependency-Check'
-            }
-
-            post {
-                success {
-                    echo 'Security Scan completed successfully'
-                    emailext(
-                        to: 'okoraforokechukwu@gmail.comm',
-                        subject: "The status of the Security Scan: ${currentBuild.result}",
-                        body: 'Log files are attached for additional information about the process',
-                        attachLog: true
-                    )
-                }
-                failure {
-                    echo 'Security Scan failed'
-                    emailext(
-                        to: 'okoraforokechukwu@gmail.comm',
-                        subject: "The status of the Security Scan: ${currentBuild.result}",
-                        body: 'Log files are attached for additional information about the process',
-                        attachLog: true
-                    )
-                }
+                echo "Deploying application to ${env.TESTING_ENVIRONMENT}"
             }
         }
         
-        stage('Deploy to Staging') {
-            steps {
-                echo 'Deploy the application to a staging server (e.g., AWS)'
-                // Implement deployment commands here
-            }
-        }
-        
-        stage('Integration Tests on Staging') {
-            steps {
-                echo 'Run integration tests on the staging environment'
-                // Implement staging integration test commands here
+        stage('Approval') {
+            steps {is
+                sh "sleep 10"
             }
         }
         
         stage('Deploy to Production') {
             steps {
-                echo 'Deploy the application to a production server (e.g., AWS)'
-                // Implement production deployment commands here
+                echo "Deploying code to ${env.PRODUCTION_ENVIRONMENT}"
             }
+        }
+    
+post {
+        success {
+            mail to: 'okoraforokechukwu@gmail.com', subject: 'Pipeline Success', body: "${env.BUILD_URL}"
+         echo "Sending Pipeline E-mail to Senior Software engineer paul"  
         }
     }
 }
