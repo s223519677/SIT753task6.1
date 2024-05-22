@@ -88,6 +88,5 @@ pipeline {
                 echo 'Deploy the application to a production server (e.g., AWS)'
                 // Implement production deployment commands here
             }
-    }
 }
 
