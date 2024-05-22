@@ -20,17 +20,17 @@ pipeline {
                     echo 'Unit tests completed successfully'
                     emailext(
                         to: 'okoraforokechukwu@gmail.com',
-                        subject: "The status of the Unit and Integration Tests: ${currentBuild.result}",
-                        body: 'Log files are attached for additional information about the process',
+                        subject: "The status of the Unit and Integration Tests: SUCCESS",
+                        body: 'Log files are attached for additional information about the process.',
                         attachLog: true
                     )
                 }
                 failure {
                     echo 'Unit tests failed'
                     emailext(
-                        to: 'okoraforokechukwu@gmail.comm',
-                        subject: "The status of the Unit and Integration Tests: ${currentBuild.result}",
-                        body: 'Log files are attached for additional information about the process',
+                        to: 'okoraforokechukwu@gmail.com',
+                        subject: "The status of the Unit and Integration Tests: FAILURE",
+                        body: 'Log files are attached for additional information about the process.',
                         attachLog: true
                     )
                 }
@@ -52,18 +52,18 @@ pipeline {
                 success {
                     echo 'Security Scan completed successfully'
                     emailext(
-                        to: 'okoraforokechukwu@gmail.comm',
-                        subject: "The status of the Security Scan: ${currentBuild.result}",
-                        body: 'Log files are attached for additional information about the process',
+                        to: 'okoraforokechukwu@gmail.com',
+                        subject: "The status of the Security Scan: SUCCESS",
+                        body: 'Log files are attached for additional information about the process.',
                         attachLog: true
                     )
                 }
                 failure {
                     echo 'Security Scan failed'
                     emailext(
-                      to: 'okoraforokechukwu@gmail.comm',
-                        subject: "The status of the Security Scan: ${currentBuild.result}",
-                        body: 'Log files are attached for additional information about the process',
+                        to: 'okoraforokechukwu@gmail.com',
+                        subject: "The status of the Security Scan: FAILURE",
+                        body: 'Log files are attached for additional information about the process.',
                         attachLog: true
                     )
                 }
@@ -89,6 +89,25 @@ pipeline {
                 echo 'Deploy the application to a production server (e.g., AWS)'
                 // Implement production deployment commands here
             }
+        }
+    }
+    
+    post {
+        success {
+            emailext(
+                to: 'okoraforokechukwu@gmail.com',
+                subject: "Pipeline SUCCESS: ${currentBuild.fullDisplayName}",
+                body: "The pipeline has completed successfully. You can find the details at ${env.BUILD_URL}",
+                attachLog: true
+            )
+        }
+        failure {
+            emailext(
+                to: 'okoraforokechukwu@gmail.com',
+                subject: "Pipeline FAILURE: ${currentBuild.fullDisplayName}",
+                body: "The pipeline has failed. Please check the logs for more details. You can find the details at ${env.BUILD_URL}",
+                attachLog: true
+            )
         }
     }
 }
