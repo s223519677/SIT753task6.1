@@ -52,7 +52,7 @@ pipeline {
                 success {
                     echo 'Security Scan completed successfully'
                     emailext(
-                       mail to: 'okoraforokechukwu@gmail.comm',
+                        to: 'okoraforokechukwu@gmail.comm',
                         subject: "The status of the Security Scan: ${currentBuild.result}",
                         body: 'Log files are attached for additional information about the process',
                         attachLog: true
@@ -61,7 +61,7 @@ pipeline {
                 failure {
                     echo 'Security Scan failed'
                     emailext(
-                     mail to: 'okoraforokechukwu@gmail.comm',
+                      to: 'okoraforokechukwu@gmail.comm',
                         subject: "The status of the Security Scan: ${currentBuild.result}",
                         body: 'Log files are attached for additional information about the process',
                         attachLog: true
