@@ -1,68 +1,94 @@
 pipeline {
-    agent any
-    environment {
-        branch = 'main'
-        scmUrl = 'https://github.com/s223519677/SIT753task6.1.git'
-        serverPort = '8080'
-        stagingServer = 'http://ec2-16-171-29-48.eu-north-1.compute.amazonaws.com:8080'
-        productionServer = 'http://ec2-16-171-29-48.eu-north-1.compute.amazonaws.com:8080'
-    }
-    stages {
-        stage('checkout git') {
+            agent any
+    
+            stages {
+            stage('Build') {
             steps {
-                git branch: branch, credentialsId: 'https', url: scmUrl
-                 echo "Fetching source code from github"
+                echo 'Build Android project using Gradle'
+                // sh './gradlew clean assembleDebug'
             }
         }
-
-        stage('build') {
+        
+        stage('Unit and Integration Tests') {
             steps {
-                
-                echo "Maven Compiling code and generating artifacts"
+                echo 'Run unit tests here'
+            }
+
+            post {
+                success {
+                    echo 'Unit tests completed successfully'
+                    emailext(
+                        to: 'okoraforokechukwu@gmail.com',
+                        subject:"The status of the Unit and Integration Tests: ${currentBuild.result}",
+                        body:'Log files are attached for additional information about the process',
+                          attachLog: true
+                    )
+                }
+                failure {
+                    echo 'Unit tests failed'
+                    emailext(
+                        to: 'okoraforokechukwu@gmail.comm',
+                        subject:"The status of the Unit and Integration Tests: ${currentBuild.result}",
+                        body:'Log files are attached for additional information about the process',
+                        attachLog: true
+                    )
+                }
             }
         }
-
-        stage ('Unit & Intergration Test') {
+        
+        stage('Code Analysis') {
             steps {
-                parallel (
-                  { "unit tests" {"make" "make test"}
-                   },
-                   {"integration tests" {"make" "make integration-test"}
+                echo 'Integrate code analysis tool (e.g., SonarQube)'
+            }
+  }
+        
+        stage('Security Scan') {
+            steps {
+                echo 'Perform security scan using a tool like OWASP Dependency-Check'
+            }
+
+            post {
+                success {
+                    echo 'Security Scan completed successfully'
+                    emailext(
+                        to: 'okoraforokechukwu@gmail.comm',
+                        subject:"The status of the Security Scan: ${currentBuild.result}",
+                        body:'Log files are attached for additional information about the process',
+                        attachLog: true
+                    )
+                }
+                failure {
+                    echo 'Security Scan failed'
+                    emailext(
+                        to: 'okoraforokechukwu@gmail.comm',
+                        subject:"The status of the Security Scan: ${currentBuild.result}",
+                         body:'Log files are attached for additional information about the process',
+                        attachLog: true
+                    )
+                }
+            }
+        }
+        
+        stage('Deploy to Staging') {
+            steps {
+                echo 'Deploy the application to a staging server (e.g., AWS)'
+                // Implement deployment commands here
+            }
+        }
+        
+        stage('Integration Tests on Staging') {
+            steps {
+                echo 'Run integration tests on the staging environment'
+                // Implement staging integration test commands here
+            }
+        }
+        
+        stage('Deploy to Production') {
+ steps {
+                echo 'Deploy the application to a production server (e.g., AWS)'
+                // Implement production deployment commands here
+            }
+        }
+    }
 }
-                )
-            }
-        }
 
-        stage('deploy to Production'){
-            steps {
-                deploy adapters: [tomcat9(credentialsId: 'Tomcat', path: '', url: 'http://ec2-16-171-29-48.eu-north-1.compute.amazonaws.com:8080')], contextPath: 'null',  war: 'target/*.war'
-                 echo "Deploying Code to AWS EC2"
-                  echo "Access the ec2 http://ec2-16-171-29-48.eu-north-1.compute.amazonaws.com:8080/manager/html "
-            }
-        }
-        stage('deploy to staging(Test'){
-            steps {
-                deploy adapters: [tomcat9(credentialsId: 'Tomcat', path: '', url: 'http://ec2-16-171-29-48.eu-north-1.compute.amazonaws.com:8080')], contextPath: 'testapp',  war: 'target/*.war'
-                 echo "Deploying Code to AWS EC2"
-            }
-        }
-
-       // stage('deploy staging'){
-       //     steps {
-        //        deploy(stagingServer, serverPort)
-        //    }
-        //}
-
-       // stage('deploy production'){
-         //   steps {
-         //       deploy(productionServer, serverPort)
-         //   }
-        //}
-    }
-    post {
-        success {
-            mail to: 'okoraforokechukwu@gmail.com', subject: 'Pipeline Success', body: "${env.BUILD_URL}"
-         echo "Sending Pipeline E-mail to Senior Software engineer paul"  
-        }
-    }
-}
