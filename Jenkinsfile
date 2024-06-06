@@ -22,7 +22,7 @@ pipeline {
                         subject:"The status of the Unit and Integration Tests: ${currentBuild.result}",
                         body:'Log files are attached for additional information about the process',
                         attachLog: true
-                    )
+                        }
                 }
                 failure {
                     echo 'Unit tests failed'
