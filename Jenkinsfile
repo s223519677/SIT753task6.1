@@ -14,6 +14,26 @@ pipeline {
                 echo "Compiling code and generating artifacts"
             }
         }
+         post {
+                success {
+                    echo 'Unit tests completed successfully'
+                    emailext(
+                        to: 'okoraforokechukwu@gmail.com',
+                        subject:"The status of the Unit and Integration Tests: ${currentBuild.result}",
+                        body:'Log files are attached for additional information about the process',
+                        attachLog: true
+                    )
+                }
+                failure {
+                    echo 'Unit tests failed'
+                    emailext(
+                        to: 'okoraforokechukwu@gmail.com',
+                        subject:"The status of the Unit and Integration Tests: ${currentBuild.result}",
+                        body:'Log files are attached for additional information about the process',
+                        attachLog: true
+                    )
+                }
+
         
         stage('Test') {
             steps {
